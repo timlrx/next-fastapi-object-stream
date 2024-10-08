@@ -1,0 +1,3 @@
+fastapi[standard]==0.109.2
+fastapi-cli==0.0.5
+simple-ai-agents==0.5.1
