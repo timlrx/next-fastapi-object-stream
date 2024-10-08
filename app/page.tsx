@@ -9,7 +9,11 @@ import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import Link from "next/link";
-import { Expense, expenseSchema, PartialExpense } from "@/app/api/chat/schema";
+import {
+  type Expense,
+  expenseSchema,
+  type PartialExpense,
+} from "@/app/api/chat/schema";
 
 const ExpenseView = ({ expense }: { expense: Expense | PartialExpense }) => {
   return (

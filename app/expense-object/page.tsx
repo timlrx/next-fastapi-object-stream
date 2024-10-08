@@ -4,7 +4,7 @@ import { ObjectIcon, VercelIcon } from "@/components/icons";
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Expense, PartialExpense } from "@/app/api/chat/schema";
+import { type Expense, type PartialExpense } from "@/app/api/chat/schema";
 import { useStreamJson } from "./useStreamJson";
 
 const ExpenseView = ({ expense }: { expense: Expense | PartialExpense }) => {
