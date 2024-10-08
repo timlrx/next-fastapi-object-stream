@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 from datetime import date
 from typing import (
     AsyncGenerator,
+    Generator,
     List,
 )
 from fastapi import FastAPI, Request
@@ -11,7 +12,10 @@ from dotenv import load_dotenv
 from fastapi.responses import StreamingResponse
 from simple_ai_agents.chat_session import ChatLLMSession
 from simple_ai_agents.models import LLMOptions
-from simple_ai_agents.utils import async_pydantic_to_text_stream
+from simple_ai_agents.utils import (
+    async_pydantic_to_text_stream,
+    pydantic_to_text_stream,
+)
 
 
 load_dotenv()
@@ -57,11 +61,11 @@ async def query(request: Request):
     messages = body.get("messages")
     prompt = messages[-1]["content"]
 
-    async def stream_text(prompt: str) -> AsyncGenerator[str, None]:
+    def stream_text(prompt: str):
         """Generate the AI model response and stream it."""
         sess = ChatLLMSession(llm_options=llm_provider)
-        stream = sess.stream_async(prompt)
-        async for chunk in stream:
+        stream = sess.stream(prompt)
+        for chunk in stream:
             yield chunk["delta"]
 
     response = StreamingResponse(stream_text(prompt))
@@ -75,11 +79,11 @@ async def query(request: Request):
     expense = body.get("expense")
     prompt = f"Please categorize the following expense: {expense}"
 
-    async def stream_object(prompt: str) -> AsyncGenerator[str, None]:
+    def stream_object(prompt: str):
         """Generate the AI model response and stream it."""
         sess = ChatLLMSession(llm_options=llm_provider)
-        stream = sess.stream_model_async(prompt, response_model=ExpenseSchema)
-        async for delta in async_pydantic_to_text_stream(stream, mode="delta"):
+        stream = sess.stream_model(prompt, response_model=ExpenseSchema)
+        for delta in pydantic_to_text_stream(stream, mode="delta"):
             yield delta
 
     response = StreamingResponse(stream_object(prompt))
@@ -93,11 +97,11 @@ async def query(request: Request):
     expense = body.get("expense")
     prompt = f"Please categorize the following expense: {expense}"
 
-    async def stream_object_json(prompt: str) -> AsyncGenerator[str, None]:
+    def stream_object_json(prompt: str):
         """Generate the AI model response and stream it."""
         sess = ChatLLMSession(llm_options=llm_provider)
-        stream = sess.stream_model_async(prompt, response_model=Expense)
-        async for delta in stream:
+        stream = sess.stream_model(prompt, response_model=Expense)
+        for delta in stream:
             result = delta.model_dump_json()
             yield result
 
