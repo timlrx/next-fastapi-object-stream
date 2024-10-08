@@ -46,39 +46,7 @@ class ExpenseSchema(BaseModel):
     expense: Expense
 
 
-async def json_stream_generator(prompt: str) -> AsyncGenerator[str, None]:
-    sess = ChatLLMSession(llm_options=llm_provider)
-    stream = sess.stream_model_async(prompt, response_model=ExpenseSchema)
-    async for chunk in stream:
-        yield chunk
-
-
-async def stream_text(prompt: str) -> AsyncGenerator[str, None]:
-    """Generate the AI model response and stream it."""
-    sess = ChatLLMSession(llm_options=llm_provider)
-    stream = sess.stream_async(prompt)
-    async for chunk in stream:
-        yield chunk["delta"]
-
-
-async def stream_object(prompt: str) -> AsyncGenerator[str, None]:
-    """Generate the AI model response and stream it."""
-    sess = ChatLLMSession(llm_options=llm_provider)
-    stream = sess.stream_model_async(prompt, response_model=ExpenseSchema)
-    async for delta in async_pydantic_to_text_stream(stream, mode="delta"):
-        yield delta
-
-
-async def stream_object_json(prompt: str) -> AsyncGenerator[str, None]:
-    """Generate the AI model response and stream it."""
-    sess = ChatLLMSession(llm_options=llm_provider)
-    stream = sess.stream_model_async(prompt, response_model=Expense)
-    async for delta in stream:
-        result = delta.model_dump_json()
-        yield result
-
-
-@app.get("/api/helloFastApi")
+@app.get("/api/hello")
 def hello_fast_api():
     return {"message": "Hello from FastAPI"}
 
@@ -88,6 +56,14 @@ async def query(request: Request):
     body = await request.json()
     messages = body.get("messages")
     prompt = messages[-1]["content"]
+
+    async def stream_text(prompt: str) -> AsyncGenerator[str, None]:
+        """Generate the AI model response and stream it."""
+        sess = ChatLLMSession(llm_options=llm_provider)
+        stream = sess.stream_async(prompt)
+        async for chunk in stream:
+            yield chunk["delta"]
+
     response = StreamingResponse(stream_text(prompt))
     response.headers["x-vercel-ai-data-stream"] = "v1"
     return response
@@ -98,6 +74,14 @@ async def query(request: Request):
     body = await request.json()
     expense = body.get("expense")
     prompt = f"Please categorize the following expense: {expense}"
+
+    async def stream_object(prompt: str) -> AsyncGenerator[str, None]:
+        """Generate the AI model response and stream it."""
+        sess = ChatLLMSession(llm_options=llm_provider)
+        stream = sess.stream_model_async(prompt, response_model=ExpenseSchema)
+        async for delta in async_pydantic_to_text_stream(stream, mode="delta"):
+            yield delta
+
     response = StreamingResponse(stream_object(prompt))
     response.headers["x-vercel-ai-data-stream"] = "v1"
     return response
@@ -108,6 +92,15 @@ async def query(request: Request):
     body = await request.json()
     expense = body.get("expense")
     prompt = f"Please categorize the following expense: {expense}"
+
+    async def stream_object_json(prompt: str) -> AsyncGenerator[str, None]:
+        """Generate the AI model response and stream it."""
+        sess = ChatLLMSession(llm_options=llm_provider)
+        stream = sess.stream_model_async(prompt, response_model=Expense)
+        async for delta in stream:
+            result = delta.model_dump_json()
+            yield result
+
     response = StreamingResponse(stream_object_json(prompt))
     response.headers["x-vercel-ai-data-stream"] = "v1"
     return response
