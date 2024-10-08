@@ -1,3 +1,5 @@
+import litellm
+import logfire
 from pydantic import BaseModel, Field
 from datetime import date
 from typing import (
@@ -17,8 +19,13 @@ load_dotenv()
 ### Create FastAPI instance with custom docs and openapi url
 app = FastAPI(docs_url="/api/docs", openapi_url="/api/openapi.json")
 openai = LLMOptions(model="gpt-4o-mini")
-github = LLMOptions(model="github/gpt-4o-mini")
-llm_provider = github
+# github = LLMOptions(model="github/gpt-4o-mini")
+llm_provider = openai
+
+# Logging configuration
+litellm.success_callback = ["logfire"]
+logfire.configure()
+logfire.instrument_fastapi(app)
 
 
 class Expense(BaseModel):
@@ -40,38 +47,32 @@ class ExpenseSchema(BaseModel):
 
 
 async def json_stream_generator(prompt: str) -> AsyncGenerator[str, None]:
-    sess = ChatLLMSession()
-    stream = sess.stream_model_async(
-        prompt, llm_options=llm_provider, response_model=ExpenseSchema
-    )
+    sess = ChatLLMSession(llm_options=llm_provider)
+    stream = sess.stream_model_async(prompt, response_model=ExpenseSchema)
     async for chunk in stream:
         yield chunk
 
 
 async def stream_text(prompt: str) -> AsyncGenerator[str, None]:
     """Generate the AI model response and stream it."""
-    sess = ChatLLMSession()
-    stream = sess.stream_async(prompt, llm_options=llm_provider)
+    sess = ChatLLMSession(llm_options=llm_provider)
+    stream = sess.stream_async(prompt)
     async for chunk in stream:
         yield chunk["delta"]
 
 
 async def stream_object(prompt: str) -> AsyncGenerator[str, None]:
     """Generate the AI model response and stream it."""
-    sess = ChatLLMSession()
-    stream = sess.stream_model_async(
-        prompt, llm_options=llm_provider, response_model=ExpenseSchema
-    )
+    sess = ChatLLMSession(llm_options=llm_provider)
+    stream = sess.stream_model_async(prompt, response_model=ExpenseSchema)
     async for delta in async_pydantic_to_text_stream(stream, mode="delta"):
         yield delta
 
 
 async def stream_object_json(prompt: str) -> AsyncGenerator[str, None]:
     """Generate the AI model response and stream it."""
-    sess = ChatLLMSession()
-    stream = sess.stream_model_async(
-        prompt, llm_options=llm_provider, response_model=Expense
-    )
+    sess = ChatLLMSession(llm_options=llm_provider)
+    stream = sess.stream_model_async(prompt, response_model=Expense)
     async for delta in stream:
         result = delta.model_dump_json()
         yield result
