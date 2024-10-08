@@ -23,7 +23,7 @@ openai = LLMOptions(model="gpt-4o-mini")
 llm_provider = openai
 
 # Logging configuration
-litellm.success_callback = ["logfire"]
+# litellm.success_callback = ["logfire"]
 logfire.configure()
 logfire.instrument_fastapi(app)
 
