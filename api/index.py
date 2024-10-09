@@ -1,3 +1,4 @@
+import asyncio
 import litellm
 import logfire
 from pydantic import BaseModel, Field
@@ -56,6 +57,13 @@ def hello_fast_api():
     return {"message": "Hello from FastAPI"}
 
 
+async def fake_stream():
+    """Generate fake AI model response and stream it."""
+    for i in range(6):
+        await asyncio.sleep(0.1)
+        yield f"Here's a sample of a response stream in text form {i}\n\n"
+
+
 @app.post("/api/text_stream")
 async def query(request: Request):
     body = await request.json()
@@ -69,7 +77,8 @@ async def query(request: Request):
         for chunk in stream:
             yield chunk["delta"]
 
-    response = StreamingResponse(stream_text(prompt))
+    # response = StreamingResponse(stream_text(prompt))
+    response = StreamingResponse(fake_stream())
     response.headers["x-vercel-ai-data-stream"] = "v1"
     return response
 

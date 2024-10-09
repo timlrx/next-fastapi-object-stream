@@ -15,6 +15,11 @@ import {
   type PartialExpense,
 } from "@/app/api/chat/schema";
 
+const api =
+  process.env.NODE_ENV === "production"
+    ? "https://stream-demo.zapdos.io/api/object_stream"
+    : "/api/object_stream";
+
 const ExpenseView = ({ expense }: { expense: Expense | PartialExpense }) => {
   return (
     <motion.div
@@ -56,7 +61,7 @@ export default function Expense() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { submit, isLoading, object } = experimental_useObject({
-    api: "/api/object_stream",
+    api: api,
     schema: expenseSchema,
     onFinish({ object }) {
       if (object != null) {

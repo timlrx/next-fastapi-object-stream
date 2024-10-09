@@ -7,6 +7,11 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { VercelIcon } from "@/components/icons";
 
+const api =
+  process.env.NODE_ENV === "production"
+    ? "https://stream-demo.zapdos.io/api/text_stream"
+    : "/api/text_stream";
+
 const MessageView = ({
   message,
 }: {
@@ -33,7 +38,7 @@ const MessageView = ({
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit, isLoading } =
     useChat({
-      api: "/api/text_stream",
+      api: api,
       onError: (e) => {
         toast.error(`Failed to send message: ${e.message}`);
       },

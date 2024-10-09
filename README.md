@@ -11,7 +11,7 @@ Backend FastAPI client library uses my [Simple AI Agents](https://github.com/tim
 
 The FastAPI server is served from the `/api` directory and `next.config.mjs` is configured to rewrite requests to `/api/:path*`.
 
-On local development, the FastAPI server is served on localhost:8000. When deployed to Vercel, the FastAPI server is deployed as [Python serverless functions](https://vercel.com/docs/functions/runtimes/python).
+On local development, the FastAPI server is served on localhost:8000. I deployed the FastAPI backend to a standalone server using the `Dockerfile` and `docker-compose.yml` files. Alternatively, when deployed to Vercel, the FastAPI server is deployed as [Python serverless functions](https://vercel.com/docs/functions/runtimes/python) - though there seems to be an issue with the streaming responses.
 
 ## Deploy your own
 
@@ -22,15 +22,15 @@ On local development, the FastAPI server is served on localhost:8000. When deplo
 Run [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init), [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/), or [pnpm](https://pnpm.io) to bootstrap the example:
 
 ```bash
-npx create-next-app --example https://github.com/vercel-labs/ai-sdk-preview-use-object
+npx create-next-app --example https://github.com/timlrx/next-fastapi-object-stream
 ```
 
 ```bash
-yarn create next-app --example https://github.com/vercel-labs/ai-sdk-preview-use-object
+yarn create next-app --example https://github.com/timlrx/next-fastapi-object-stream
 ```
 
 ```bash
-pnpm create next-app --example https://github.com/vercel-labs/ai-sdk-preview-use-object
+pnpm create next-app --example https://github.com/timlrx/next-fastapi-object-stream
 ```
 
 To run the example locally you need to:

@@ -7,6 +7,11 @@ import Link from "next/link";
 import { type Expense, type PartialExpense } from "@/app/api/chat/schema";
 import { useStreamJson } from "./useStreamJson";
 
+const api =
+  process.env.NODE_ENV === "production"
+    ? "https://stream-demo.zapdos.io/api/stream_object_json"
+    : "/api/stream_object_json";
+
 const ExpenseView = ({ expense }: { expense: Expense | PartialExpense }) => {
   return (
     <motion.div
@@ -59,7 +64,7 @@ export default function Home() {
       setExpenses((prev) => [...prev, {} as Expense]); // Add a new empty expense
 
       await streamJson({
-        url: "/api/stream_object_json",
+        url: api,
         method: "POST",
         body: { expense: input.value },
         onChunk: (chunk) => {

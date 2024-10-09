@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GITHUB_API_KEY=${GITHUB_API_KEY}
+      - LOGFIRE_TOKEN=${LOGFIRE_TOKEN}
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/hello"]
+      interval: 300s
+      timeout: 10s
+      retries: 3
