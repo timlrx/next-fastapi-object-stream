@@ -13,6 +13,16 @@ The FastAPI server is served from the `/api` directory and `next.config.mjs` is 
 
 On local development, the FastAPI server is served on localhost:8000. I deployed the FastAPI backend to a standalone server using the `Dockerfile` and `docker-compose.yml` files. Alternatively, when deployed to Vercel, the FastAPI server is deployed as [Python serverless functions](https://vercel.com/docs/functions/runtimes/python) - though there seems to be an issue with the streaming responses.
 
+## Demo
+
+
+https://github.com/user-attachments/assets/573f8041-dc52-4b19-906a-dff845e47e07
+
+https://github.com/user-attachments/assets/037562d2-aab5-4762-95b1-995f85dd4d22
+
+https://github.com/user-attachments/assets/ab1cf15a-2cd3-4281-86b3-42be2f27a90c
+
+
 ## Deploy your own
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel-labs%2Fai-sdk-preview-use-object&env=OPENAI_API_KEY&envDescription=API%20keys%20needed%20for%20application&envLink=platform.openai.com)
