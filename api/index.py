@@ -11,6 +11,7 @@ from typing import (
 from fastapi import FastAPI, Request
 from dotenv import load_dotenv
 from fastapi.responses import StreamingResponse
+from fastapi.middleware.cors import CORSMiddleware
 from simple_ai_agents.chat_session import ChatLLMSession
 from simple_ai_agents.models import LLMOptions
 from simple_ai_agents.utils import (
@@ -24,11 +25,11 @@ load_dotenv()
 ### Create FastAPI instance with custom docs and openapi url
 app = FastAPI(docs_url="/api/docs", openapi_url="/api/openapi.json")
 openai = LLMOptions(model="gpt-4o-mini")
-# github = LLMOptions(model="github/gpt-4o-mini")
-llm_provider = openai
+github = LLMOptions(model="github/gpt-4o-mini")
+llm_provider = github
 
 # Logging configuration
-# litellm.success_callback = ["logfire"]
+litellm.success_callback = ["logfire"]
 logfire.configure()
 logfire.instrument_fastapi(app)
 
@@ -109,6 +110,3 @@ async def query(request: Request):
     response = StreamingResponse(stream_object_json(prompt))
     response.headers["x-vercel-ai-data-stream"] = "v1"
     return response
-
-
-handler = Mangum(app)
