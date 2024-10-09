@@ -1,5 +1,6 @@
 import litellm
 import logfire
+from mangum import Mangum
 from pydantic import BaseModel, Field
 from datetime import date
 from typing import (
@@ -108,3 +109,6 @@ async def query(request: Request):
     response = StreamingResponse(stream_object_json(prompt))
     response.headers["x-vercel-ai-data-stream"] = "v1"
     return response
+
+
+handler = Mangum(app)
