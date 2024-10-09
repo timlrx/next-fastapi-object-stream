@@ -1,6 +1,5 @@
 import litellm
 import logfire
-from mangum import Mangum
 from pydantic import BaseModel, Field
 from datetime import date
 from typing import (
