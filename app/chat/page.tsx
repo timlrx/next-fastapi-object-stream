@@ -7,10 +7,7 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { VercelIcon } from "@/components/icons";
 
-const api =
-  process.env.NODE_ENV === "production"
-    ? "https://stream-demo.zapdos.io/api/text_stream"
-    : "/api/text_stream";
+const api = "/api/text_stream";
 
 const MessageView = ({
   message,

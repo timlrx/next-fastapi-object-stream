@@ -15,10 +15,7 @@ import {
   type PartialExpense,
 } from "@/app/api/chat/schema";
 
-const api =
-  process.env.NODE_ENV === "production"
-    ? "https://stream-demo.zapdos.io/api/object_stream"
-    : "/api/object_stream";
+const api = "/api/object_stream";
 
 const ExpenseView = ({ expense }: { expense: Expense | PartialExpense }) => {
   return (
